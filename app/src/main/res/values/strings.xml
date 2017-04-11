@@ -4,5 +4,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="night_mode">Night Mode</string>
+    <string name="cellular_data_less">Save cellular data</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="about">About</string>
 </resources>

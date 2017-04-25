@@ -1,4 +1,4 @@
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.ui.activity;
 
 
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+
+import org.explosion.zhihudaily.R;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 

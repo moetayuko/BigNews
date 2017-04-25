@@ -1,4 +1,4 @@
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.ui.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

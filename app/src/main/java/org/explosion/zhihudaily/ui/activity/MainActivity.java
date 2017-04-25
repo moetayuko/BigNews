@@ -1,4 +1,4 @@
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
 
+import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.helper.parseJSON;
 

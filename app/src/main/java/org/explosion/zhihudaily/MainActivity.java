@@ -3,16 +3,28 @@ package org.explosion.zhihudaily;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheMode;
+import com.lzy.okgo.callback.StringCallback;
+
+import org.explosion.zhihudaily.adapter.StoryAdapter;
+import org.explosion.zhihudaily.helper.parseJSON;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +53,20 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        OkGo.get("http://news-at.zhihu.com/api/4/news/latest")
+                .tag(this)
+                .cacheKey("cacheKey")
+                .cacheMode(CacheMode.DEFAULT)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String s, Call call, Response response) {
+                        RecyclerView storyListView = (RecyclerView) findViewById(R.id.story_list);
+                        storyListView.setLayoutManager(layoutManager);
+                        storyListView.setAdapter(new StoryAdapter(parseJSON.parseDailyNews(s).getStories()));
+                    }
+                });
     }
 
     @Override

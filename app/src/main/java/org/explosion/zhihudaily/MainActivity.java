@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,6 +28,9 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    FloatingActionButton scrollToTop;
+    RecyclerView storyListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +38,12 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        scrollToTop = (FloatingActionButton) findViewById(R.id.scroll_to_top);
+        scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                storyListView.smoothScrollToPosition(0);
+                scrollToTop.hide();
             }
         });
 
@@ -62,9 +64,24 @@ public class MainActivity extends AppCompatActivity
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        RecyclerView storyListView = (RecyclerView) findViewById(R.id.story_list);
+                        storyListView = (RecyclerView) findViewById(R.id.story_list);
                         storyListView.setLayoutManager(layoutManager);
                         storyListView.setAdapter(new StoryAdapter(parseJSON.parseDailyNews(s).getStories()));
+                        storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
+                                    scrollToTop.hide();
+                            }
+
+                            @Override
+                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
+                                        storyListView.canScrollVertically(-1))
+                                    scrollToTop.show();
+                                super.onScrollStateChanged(recyclerView, newState);
+                            }
+                        });
                     }
                 });
     }

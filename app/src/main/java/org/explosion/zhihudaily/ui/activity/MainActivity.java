@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        OkGo.get(Constants.NEWS_LATEST_URL)
+        OkGo.get(Constants.URL.NEWS_LATEST_URL)
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)

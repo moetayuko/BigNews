@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.explosion.zhihudaily">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".ZhihuDaily"
         android:allowBackup="true"
@@ -23,7 +25,10 @@
         <activity
             android:name=".ui.activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".ui.activity.StoryActivity"
+            android:label="@string/title_activity_story"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

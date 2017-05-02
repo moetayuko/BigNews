@@ -1,6 +1,7 @@
 package org.explosion.zhihudaily.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import com.bumptech.glide.Glide;
 
 import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.bean.Story;
+import org.explosion.zhihudaily.support.Constants;
+import org.explosion.zhihudaily.ui.activity.StoryActivity;
 
 import java.util.List;
 
@@ -49,7 +52,19 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
             mContext = parent.getContext();
         View view = LayoutInflater.from(mContext).inflate(R.layout.story_list_item,
                 parent, false);
-        return new ViewHolder(view);
+
+        final ViewHolder holder = new ViewHolder(view);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                Story story = mStoryList.get(position);
+                Intent intent = new Intent(mContext, StoryActivity.class);
+                intent.putExtra(Constants.KEY.STORY_ID, story.getId());
+                mContext.startActivity(intent);
+            }
+        });
+        return holder;
     }
 
     @Override

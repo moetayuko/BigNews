@@ -1,16 +1,23 @@
 package org.explosion.zhihudaily.bean;
 
-import java.util.List;
-
 /**
  * Created by dianlujitao on 17-4-25.
  */
 
-public class StoryBase {
-    private String title;
-    private String ga_prefix;
-    private int type;
-    private int id;
+class StoryBase {
+    protected String title;
+    protected String ga_prefix;
+    protected int type;
+    protected int id;
+
+    public StoryBase() { }
+
+    public StoryBase(StoryBase m) {
+        title = m.title;
+        ga_prefix = m.ga_prefix;
+        type = m.type;
+        id = m.id;
+    }
 
     public String getTitle() {
         return title;

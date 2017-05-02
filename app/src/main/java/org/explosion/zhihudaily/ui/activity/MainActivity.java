@@ -24,6 +24,7 @@ import com.lzy.okgo.callback.StringCallback;
 import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.helper.parseJSON;
+import org.explosion.zhihudaily.support.Constants;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        OkGo.get("http://news-at.zhihu.com/api/4/news/latest")
+        OkGo.get(Constants.NEWS_LATEST_URL)
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)

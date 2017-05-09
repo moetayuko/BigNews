@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -127,9 +128,21 @@ public class MainActivity extends AppCompatActivity
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
+                        notifyNetworkError();
                         super.onError(call, response, e);
                     }
                 });
+    }
+
+    private void notifyNetworkError() {
+        Snackbar.make(storyListView, R.string.network_error, Snackbar.LENGTH_LONG)
+                .setAction(R.string.network_settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        startActivity(intent);
+                    }
+                }).show();
     }
 
     private void updateStoryList() {

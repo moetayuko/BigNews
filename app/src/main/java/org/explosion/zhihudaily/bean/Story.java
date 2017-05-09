@@ -1,16 +1,16 @@
 package org.explosion.zhihudaily.bean;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by dianlujitao on 17-4-25.
  */
 
 public class Story extends StoryBase {
-    private List<String> images;
+    private ArrayList<String> images;
     private boolean multipic;
 
-    public List<String> getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
@@ -22,7 +22,7 @@ public class Story extends StoryBase {
         return multipic;
     }
 
-    public void setImages(List<String> images) {
+    public void setImages(ArrayList<String> images) {
         this.images = images;
     }
 

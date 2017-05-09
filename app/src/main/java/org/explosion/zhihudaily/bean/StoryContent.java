@@ -1,6 +1,6 @@
 package org.explosion.zhihudaily.bean;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by dianlujitao on 17-5-2.
@@ -11,9 +11,9 @@ public class StoryContent extends StoryBase {
     private String image_source;
     private String image;
     private String share_url;
-    private List<String> js;
-    private List<String> images;
-    private List<String> css;
+    private ArrayList<String> js;
+    private ArrayList<String> images;
+    private ArrayList<String> css;
 
     public StoryContent() {
         super();
@@ -50,7 +50,7 @@ public class StoryContent extends StoryBase {
         return js.get(0);
     }
 
-    public List<String> getCss() {
+    public ArrayList<String> getCss() {
         return css;
     }
 }

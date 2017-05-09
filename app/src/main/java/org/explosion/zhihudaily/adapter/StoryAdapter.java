@@ -17,7 +17,7 @@ import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.support.Constants;
 import org.explosion.zhihudaily.ui.activity.StoryActivity;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by dianlujitao on 17-4-25.
@@ -27,7 +27,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
     private Context mContext;
 
-    private List<Story> mStoryList;
+    private ArrayList<Story> mStoryList;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -42,7 +42,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
         }
     }
 
-    public StoryAdapter(List<Story> storyList) {
+    public StoryAdapter(ArrayList<Story> storyList) {
         mStoryList = storyList;
     }
 

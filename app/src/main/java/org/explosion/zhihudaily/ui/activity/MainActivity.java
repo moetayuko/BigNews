@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton scrollToTop;
     RecyclerView storyListView;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     boolean doubleBackToExitPressedOnce;
 
     ArrayList<Story> storyList;
@@ -70,6 +73,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.story_list_swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestDailyStory();
+            }
+        });
 
         setupStoryListView();
         requestDailyStory();
@@ -107,7 +118,16 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
                         dailyStory = parseJSON.parseDailyNews(s);
-                        updateStoryList();
+                        if (dailyStory != null)
+                            updateStoryList();
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        if (swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        super.onError(call, response, e);
                     }
                 });
     }
@@ -116,6 +136,9 @@ public class MainActivity extends AppCompatActivity
         storyList.clear();
         storyList.addAll(dailyStory.getStories());
         adapter.notifyDataSetChanged();
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override

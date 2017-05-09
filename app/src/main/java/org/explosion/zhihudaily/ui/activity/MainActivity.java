@@ -23,8 +23,12 @@ import com.lzy.okgo.callback.StringCallback;
 
 import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
+import org.explosion.zhihudaily.bean.DailyStory;
+import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.helper.parseJSON;
 import org.explosion.zhihudaily.support.Constants;
+
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -36,6 +40,11 @@ public class MainActivity extends AppCompatActivity
     RecyclerView storyListView;
 
     boolean doubleBackToExitPressedOnce;
+
+    ArrayList<Story> storyList;
+    DailyStory dailyStory;
+
+    StoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +71,34 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        setupStoryListView();
+        requestDailyStory();
+    }
+
+    private void setupStoryListView() {
+        storyListView = (RecyclerView) findViewById(R.id.story_list);
+        storyListView.setLayoutManager(new LinearLayoutManager(this));
+        storyList = new ArrayList<>();
+        adapter = new StoryAdapter(storyList);
+        storyListView.setAdapter(adapter);
+        storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
+                    scrollToTop.hide();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
+                        storyListView.canScrollVertically(-1))
+                    scrollToTop.show();
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+    }
+
+    private void requestDailyStory() {
         OkGo.get(Constants.URL.NEWS_LATEST_URL)
                 .tag(this)
                 .cacheKey("cacheKey")
@@ -70,26 +106,16 @@ public class MainActivity extends AppCompatActivity
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        storyListView = (RecyclerView) findViewById(R.id.story_list);
-                        storyListView.setLayoutManager(layoutManager);
-                        storyListView.setAdapter(new StoryAdapter(parseJSON.parseDailyNews(s).getStories()));
-                        storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                            @Override
-                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                                if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
-                                    scrollToTop.hide();
-                            }
-
-                            @Override
-                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
-                                        storyListView.canScrollVertically(-1))
-                                    scrollToTop.show();
-                                super.onScrollStateChanged(recyclerView, newState);
-                            }
-                        });
+                        dailyStory = parseJSON.parseDailyNews(s);
+                        updateStoryList();
                     }
                 });
+    }
+
+    private void updateStoryList() {
+        storyList.clear();
+        storyList.addAll(dailyStory.getStories());
+        adapter.notifyDataSetChanged();
     }
 
     @Override

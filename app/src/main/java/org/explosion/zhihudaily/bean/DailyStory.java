@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class DailyStory {
     private String date;
     private ArrayList<Story> stories;
-    private ArrayList<TopStory> topStories;
+    private ArrayList<TopStory> top_stories;
 
     public String getDate() {
         return date;
@@ -20,6 +20,6 @@ public class DailyStory {
     }
 
     public ArrayList<TopStory> getTopStories() {
-        return topStories;
+        return top_stories;
     }
 }

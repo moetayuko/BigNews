@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.lzy.okgo.OkGo;
@@ -27,6 +28,7 @@ import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
+import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.parseJSON;
 import org.explosion.zhihudaily.support.Constants;
 
@@ -37,6 +39,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "MainActivity";
 
     FloatingActionButton scrollToTop;
     RecyclerView storyListView;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     boolean doubleBackToExitPressedOnce;
 
     ArrayList<Story> storyList;
+    ArrayList<TopStory> topStoryList;
     DailyStory dailyStory;
 
     StoryAdapter adapter;
@@ -90,9 +94,12 @@ public class MainActivity extends AppCompatActivity
     private void setupStoryListView() {
         storyListView = (RecyclerView) findViewById(R.id.story_list);
         storyListView.setLayoutManager(new LinearLayoutManager(this));
+
         storyList = new ArrayList<>();
-        adapter = new StoryAdapter(storyList);
+        topStoryList = new ArrayList<>();
+        adapter = new StoryAdapter(storyList, topStoryList);
         storyListView.setAdapter(adapter);
+
         storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -148,6 +155,9 @@ public class MainActivity extends AppCompatActivity
     private void updateStoryList() {
         storyList.clear();
         storyList.addAll(dailyStory.getStories());
+        topStoryList.clear();
+        topStoryList.addAll(dailyStory.getTopStories());
+
         adapter.notifyDataSetChanged();
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);

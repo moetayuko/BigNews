@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,6 +37,9 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import static org.explosion.zhihudaily.support.Constants.URL.STORY_CONTENT_PREFIX;
+import static org.explosion.zhihudaily.support.Constants.URL.STORY_LATEST;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -57,9 +61,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.story_list_fl, StoryListFragment.newInstance())
-                .commit();
+        MenuItem item = navigationView.getMenu().getItem(0);
+        if (item != null) {
+            onNavigationItemSelected(item);
+        }
     }
 
     @Override
@@ -119,23 +124,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String tag;
+        Fragment fg;
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id) {
+            case R.id.nav_home:
+            default:
+                fg = StoryListFragment.newInstance(STORY_CONTENT_PREFIX + STORY_LATEST);
+                tag = "story_home";
+                break;
         }
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.story_list_fl, fg, tag)
+                .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        item.setChecked(true);
         return true;
     }
 }

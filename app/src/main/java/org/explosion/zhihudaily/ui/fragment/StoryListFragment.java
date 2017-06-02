@@ -42,27 +42,37 @@ public class StoryListFragment extends Fragment {
 
     private Context mContext;
 
+    private String storyListURL;
+
     public StoryListFragment() {
         // Required empty public constructor
     }
 
-    public static StoryListFragment newInstance() {
-        return new StoryListFragment();
+    public static StoryListFragment newInstance(String url) {
+        StoryListFragment fragment = new StoryListFragment();
+        Bundle args = new Bundle();
+        args.putString(Constants.KEY.STORY_LIST_URL, url);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getContext();
+        if (getArguments() != null) {
+            mContext = getContext();
 
-        swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestDailyStory();
-            }
-        });
+            swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    requestDailyStory();
+                }
+            });
+
+            storyListURL = getArguments().getString(Constants.KEY.STORY_LIST_URL);
+        }
     }
 
     @Override
@@ -110,7 +120,7 @@ public class StoryListFragment extends Fragment {
     }
 
     private void requestDailyStory() {
-        OkGo.get(Constants.URL.NEWS_LATEST_URL)
+        OkGo.get(storyListURL)
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)

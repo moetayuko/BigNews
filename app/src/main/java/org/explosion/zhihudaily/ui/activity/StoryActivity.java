@@ -90,7 +90,7 @@ public class StoryActivity extends AppCompatActivity {
         int storyId = getIntent().getIntExtra(Constants.KEY.STORY_ID, -1);
         if (storyId == -1)
             return;
-        OkGo.get(Constants.URL.NEWS_CONTENT_PREFIX + Integer.toString(storyId))
+        OkGo.get(Constants.URL.STORY_CONTENT_PREFIX + Integer.toString(storyId))
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)

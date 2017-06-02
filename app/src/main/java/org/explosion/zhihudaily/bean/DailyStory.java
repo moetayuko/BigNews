@@ -1,6 +1,6 @@
 package org.explosion.zhihudaily.bean;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dianlujitao on 17-4-25.
@@ -8,18 +8,18 @@ import java.util.ArrayList;
 
 public class DailyStory {
     private String date;
-    private ArrayList<Story> stories;
-    private ArrayList<TopStory> topStories;
+    private List<Story> stories;
+    private List<TopStory> topStories;
 
     public String getDate() {
         return date;
     }
 
-    public ArrayList<Story> getStories() {
+    public List<Story> getStories() {
         return stories;
     }
 
-    public ArrayList<TopStory> getTopStories() {
+    public List<TopStory> getTopStories() {
         return topStories;
     }
 }

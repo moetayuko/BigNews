@@ -1,11 +1,8 @@
 package org.explosion.zhihudaily.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +28,8 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import static org.explosion.zhihudaily.helper.UIUtils.notifyNetworkError;
+
 public class StoryListFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -40,6 +39,8 @@ public class StoryListFragment extends Fragment {
 
     private List<Story> storyList = new ArrayList<>();
     private DailyStory dailyStory;
+
+    private Context mContext;
 
     public StoryListFragment() {
         // Required empty public constructor
@@ -52,6 +53,8 @@ public class StoryListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mContext = getContext();
 
         swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -124,21 +127,10 @@ public class StoryListFragment extends Fragment {
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
-                        notifyNetworkError();
+                        notifyNetworkError(storyListView, mContext);
                         super.onError(call, response, e);
                     }
                 });
-    }
-
-    private void notifyNetworkError() {
-        Snackbar.make(storyListView, R.string.network_error, Snackbar.LENGTH_LONG)
-                .setAction(R.string.network_settings, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-                        startActivity(intent);
-                    }
-                }).show();
     }
 
     private void updateStoryList() {

@@ -29,6 +29,7 @@ import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.helper.parseJSON;
 import org.explosion.zhihudaily.support.Constants;
+import org.explosion.zhihudaily.ui.fragment.StoryListFragment;
 
 import java.util.ArrayList;
 
@@ -38,17 +39,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    FloatingActionButton scrollToTop;
-    RecyclerView storyListView;
-
-    SwipeRefreshLayout swipeRefreshLayout;
-
     boolean doubleBackToExitPressedOnce;
-
-    ArrayList<Story> storyList;
-    DailyStory dailyStory;
-
-    StoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +47,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        scrollToTop = (FloatingActionButton) findViewById(R.id.scroll_to_top);
-        scrollToTop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                storyListView.smoothScrollToPosition(0);
-                scrollToTop.hide();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,83 +57,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.story_list_swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestDailyStory();
-            }
-        });
-
-        setupStoryListView();
-        requestDailyStory();
-    }
-
-    private void setupStoryListView() {
-        storyListView = (RecyclerView) findViewById(R.id.story_list);
-        storyListView.setLayoutManager(new LinearLayoutManager(this));
-        storyList = new ArrayList<>();
-        adapter = new StoryAdapter(storyList);
-        storyListView.setAdapter(adapter);
-        storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
-                    scrollToTop.hide();
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
-                        storyListView.canScrollVertically(-1))
-                    scrollToTop.show();
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
-    }
-
-    private void requestDailyStory() {
-        OkGo.get(Constants.URL.NEWS_LATEST_URL)
-                .tag(this)
-                .cacheKey("cacheKey")
-                .cacheMode(CacheMode.DEFAULT)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(String s, Call call, Response response) {
-                        dailyStory = parseJSON.parseDailyNews(s);
-                        if (dailyStory != null)
-                            updateStoryList();
-                    }
-
-                    @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        notifyNetworkError();
-                        super.onError(call, response, e);
-                    }
-                });
-    }
-
-    private void notifyNetworkError() {
-        Snackbar.make(storyListView, R.string.network_error, Snackbar.LENGTH_LONG)
-                .setAction(R.string.network_settings, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-                        startActivity(intent);
-                    }
-                }).show();
-    }
-
-    private void updateStoryList() {
-        storyList.clear();
-        storyList.addAll(dailyStory.getStories());
-        adapter.notifyDataSetChanged();
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.story_list_fl, StoryListFragment.newInstance())
+                .commit();
     }
 
     @Override

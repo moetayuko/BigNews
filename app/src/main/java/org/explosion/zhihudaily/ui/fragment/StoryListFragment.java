@@ -127,7 +127,7 @@ public class StoryListFragment extends Fragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        dailyStory = parseJSON.parseDailyNews(s);
+                        dailyStory = parseJSON.getDailyStories(s);
                         if (dailyStory != null)
                             updateStoryList();
                     }

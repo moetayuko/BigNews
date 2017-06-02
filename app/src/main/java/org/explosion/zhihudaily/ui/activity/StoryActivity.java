@@ -97,7 +97,7 @@ public class StoryActivity extends AppCompatActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        storyContent = new StoryContent(parseJSON.parseStoryContent(s));
+                        storyContent = new StoryContent(parseJSON.getStoryContent(s));
                         collapsingToolbarLayout.setTitle(storyContent.getTitle());
 
                         String html = WebUtils.buildHtmlWithCss(storyContent.getBody(), storyContent.getCss());

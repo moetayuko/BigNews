@@ -10,13 +10,11 @@ import org.explosion.zhihudaily.bean.StoryContent;
  */
 
 public final class parseJSON {
-    public static DailyStory parseDailyNews(String jsonData) {
-        Gson gson = new Gson();
-        return gson.fromJson(jsonData, DailyStory.class);
+    public static DailyStory getDailyStories(String jsonData) {
+        return new Gson().fromJson(jsonData, DailyStory.class);
     }
 
-    public static StoryContent parseStoryContent(String jsonData) {
-        Gson gson = new Gson();
-        return gson.fromJson(jsonData, StoryContent.class);
+    public static StoryContent getStoryContent(String jsonData) {
+        return new Gson().fromJson(jsonData, StoryContent.class);
     }
 }

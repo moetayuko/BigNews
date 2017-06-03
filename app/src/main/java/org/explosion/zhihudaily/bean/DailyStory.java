@@ -33,7 +33,7 @@ import java.util.List;
 public class DailyStory {
     private String date;
     private List<Story> stories;
-    private List<TopStory> topStories;
+    private List<TopStory> top_stories;
 
     public String getDate() {
         return date;
@@ -44,6 +44,6 @@ public class DailyStory {
     }
 
     public List<TopStory> getTopStories() {
-        return topStories;
+        return top_stories;
     }
 }

@@ -35,33 +35,42 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bannerlayout.Interface.OnBannerClickListener;
+import com.bannerlayout.widget.BannerLayout;
 import com.bumptech.glide.Glide;
 
 import org.explosion.zhihudaily.R;
+import org.explosion.zhihudaily.bean.BannerItem;
 import org.explosion.zhihudaily.bean.Story;
+import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.support.Constants;
 import org.explosion.zhihudaily.ui.activity.StoryActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dianlujitao on 17-4-25.
  */
 
-public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
+public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "StoryAdapter";
+
+    private static final int TYPE_BANNER = 0;
+    private static final int TYPE_NORMAL = 1;
 
     private Context mContext;
 
     private List<Story> mStoryList;
+    private List<TopStory> mTopStoryList;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ImageView storyImage;
         TextView storyTitle;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
             storyImage = (ImageView) view.findViewById(R.id.story_image);
@@ -69,42 +78,102 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
         }
     }
 
-    public StoryAdapter(List<Story> storyList) {
+    private static class BannerHolder extends RecyclerView.ViewHolder {
+        BannerLayout banner;
+
+        BannerHolder(View view) {
+            super(view);
+            banner = (BannerLayout) view.findViewById(R.id.banner);
+        }
+    }
+
+    public StoryAdapter(List<Story> storyList, List<TopStory> topStoryList) {
         mStoryList = storyList;
+        mTopStoryList = topStoryList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mContext == null)
             mContext = parent.getContext();
-        View view = LayoutInflater.from(mContext).inflate(R.layout.story_list_item,
-                parent, false);
+        View view;
+        final RecyclerView.ViewHolder holder;
 
-        final ViewHolder holder = new ViewHolder(view);
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                Story story = mStoryList.get(position);
-                Intent intent = new Intent(mContext, StoryActivity.class);
-                intent.putExtra(Constants.KEY.STORY_ID, story.getId());
-                mContext.startActivity(intent);
-            }
-        });
+        if (viewType == TYPE_BANNER) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.banner, parent, false);
+            holder = new BannerHolder(view);
+        } else {
+            view = LayoutInflater.from(mContext).inflate(R.layout.story_list_item,
+                    parent, false);
+            holder = new ViewHolder(view);
+            ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getRealPosition(holder);
+                    Story story = mStoryList.get(position);
+                    Intent intent = new Intent(mContext, StoryActivity.class);
+                    intent.putExtra(Constants.KEY.STORY_ID, story.getId());
+                    mContext.startActivity(intent);
+                }
+            });
+        }
+
         return holder;
     }
 
+    public int getItemViewType(int position) {
+        if (mTopStoryList != null && position == 0)
+            return TYPE_BANNER;
+        return TYPE_NORMAL;
+    }
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Story story = mStoryList.get(position);
-        holder.storyTitle.setText(story.getTitle());
-        if (story.getImages() == null) {
-            holder.storyImage.setVisibility(View.GONE);
-            Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
-        } else {
-            holder.storyImage.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(story.getImages().get(0)).into(holder.storyImage);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case TYPE_BANNER:
+                List<BannerItem> bannerItemList = new ArrayList<>();
+                for (TopStory i : mTopStoryList) {
+                    String title = i.getTitle(), image = i.getImage();
+                    if (title != null && image != null) {
+                        bannerItemList.add(new BannerItem(image, title));
+                    }
+                }
+
+                ((BannerHolder) holder).banner
+                        .initTips(false, true, true)
+                        .initListResources(bannerItemList)
+                        .setOnBannerClickListener(new OnBannerClickListener() {
+                            @Override
+                            public void onBannerClick(View view, int position, Object model) {
+                                TopStory story = mTopStoryList.get(position);
+                                Intent intent = new Intent(mContext, StoryActivity.class);
+                                intent.putExtra(Constants.KEY.STORY_ID, story.getId());
+                                mContext.startActivity(intent);
+                            }
+                        })
+                        .switchBanner(true);
+                break;
+            case TYPE_NORMAL:
+                int pos = getRealPosition(holder);
+                Story story = mStoryList.get(pos);
+                ViewHolder viewHolder = (ViewHolder) holder;
+                viewHolder.storyTitle.setText(story.getTitle());
+                if (story.getImages() == null) {
+                    viewHolder.storyImage.setVisibility(View.GONE);
+                    Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
+                } else {
+                    viewHolder.storyImage.setVisibility(View.VISIBLE);
+                    Glide.with(mContext).load(story.getImages().get(0)).into(viewHolder.storyImage);
+                }
+                break;
+            default:
+                break;
         }
+    }
+
+    private int getRealPosition(RecyclerView.ViewHolder holder) {
+        int position = holder.getLayoutPosition();
+        return mTopStoryList == null ? position : position - 1;
     }
 
     @Override

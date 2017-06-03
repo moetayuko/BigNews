@@ -44,6 +44,7 @@ import org.explosion.zhihudaily.adapter.EndlessRecyclerViewScrollListener;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
+import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.support.Constants;
 
@@ -68,11 +69,14 @@ public class StoryListFragment extends Fragment {
     private LinearLayoutManager layoutManager;
 
     private List<Story> storyList = new ArrayList<>();
+    private List<TopStory> topStoryList;
     private DailyStory dailyStory;
 
     private Context mContext;
 
     private String storyListURL;
+
+    private Boolean isTheme;
 
     public StoryListFragment() {
         // Required empty public constructor
@@ -93,6 +97,7 @@ public class StoryListFragment extends Fragment {
 
         if (getArguments() != null) {
             mContext = getContext();
+            isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
 
             swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
             swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -135,7 +140,10 @@ public class StoryListFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         storyListView.setLayoutManager(layoutManager);
 
-        adapter = new StoryAdapter(storyList);
+        if (!isTheme) {
+            topStoryList = new ArrayList<>();
+        }
+        adapter = new StoryAdapter(storyList, topStoryList);
         storyListView.setAdapter(adapter);
         storyListView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -191,6 +199,10 @@ public class StoryListFragment extends Fragment {
     private void updateStoryList(boolean isRefreshing) {
         if (isRefreshing) {
             storyList.clear();
+            if (!isTheme) {
+                topStoryList.clear();
+                topStoryList.addAll(dailyStory.getTopStories());
+            }
         }
         storyList.addAll(dailyStory.getStories());
         adapter.notifyDataSetChanged();
@@ -200,7 +212,7 @@ public class StoryListFragment extends Fragment {
     }
 
     private void loadMoreStories() {
-        if (!getArguments().getBoolean(STORY_LIST_TYPE)) {
+        if (!isTheme) {
             storyListURL = getDailyStoryByDate(dailyStory.getDate());
             retrieveStoryList(false);
         }

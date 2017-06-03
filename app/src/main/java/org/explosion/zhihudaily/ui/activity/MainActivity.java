@@ -30,6 +30,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private int[] themeIdx;
 
     private Menu navMenu;
+    private Fragment fragment;
 
     private static final int UPDATE_DRAWER_MENU = 10000;
 
@@ -115,7 +118,10 @@ public class MainActivity extends AppCompatActivity
         if (item != null) {
             onNavigationItemSelected(item);
         }
-        retrieveDrawerMenu();
+
+        if (savedInstanceState == null) {
+            retrieveDrawerMenu();
+        }
     }
 
     private void retrieveDrawerMenu() {
@@ -222,9 +228,22 @@ public class MainActivity extends AppCompatActivity
             isTheme = true;
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.story_list_fl, StoryListFragment.newInstance(url, isTheme), tag)
-                .commit();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (fragment != null) {
+            ft.hide(fragment);
+        }
+        Fragment nextFg = getSupportFragmentManager().findFragmentByTag(tag);
+        if (nextFg == null) {
+            nextFg = StoryListFragment.newInstance(url, isTheme);
+            ft.add(R.id.story_list_fl, nextFg, tag);
+        } else {
+            ft.show(nextFg);
+        }
+        fragment = nextFg;
+
+        ft.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

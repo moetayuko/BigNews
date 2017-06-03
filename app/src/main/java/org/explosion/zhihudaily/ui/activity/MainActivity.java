@@ -3,21 +3,16 @@ package org.explosion.zhihudaily.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.lzy.okgo.OkGo;
@@ -25,25 +20,52 @@ import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
 
 import org.explosion.zhihudaily.R;
-import org.explosion.zhihudaily.adapter.StoryAdapter;
-import org.explosion.zhihudaily.bean.DailyStory;
-import org.explosion.zhihudaily.bean.Story;
-import org.explosion.zhihudaily.helper.parseJSON;
-import org.explosion.zhihudaily.support.Constants;
+import org.explosion.zhihudaily.bean.Theme;
 import org.explosion.zhihudaily.ui.fragment.StoryListFragment;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
 
-import static org.explosion.zhihudaily.support.Constants.URL.STORY_CONTENT_PREFIX;
-import static org.explosion.zhihudaily.support.Constants.URL.STORY_LATEST;
+import static java.lang.Math.max;
+import static org.explosion.zhihudaily.helper.WebUtils.getLatestStoryListURL;
+import static org.explosion.zhihudaily.helper.WebUtils.getThemeDescURL;
+import static org.explosion.zhihudaily.helper.WebUtils.getThemeListURL;
+import static org.explosion.zhihudaily.helper.parseJSON.getThemesList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "MainActivity";
 
     boolean doubleBackToExitPressedOnce;
+
+    private List<Theme> themes;
+    private int[] themeIdx;
+
+    private Menu navMenu;
+
+    private static final int UPDATE_DRAWER_MENU = 10000;
+    private static class MyHandler extends Handler {
+        WeakReference<MainActivity> mActivity;
+        MyHandler(MainActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = mActivity.get();
+            switch (msg.what) {
+                case UPDATE_DRAWER_MENU:
+                    activity.updateDrawerMenu();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    MyHandler handler = new MyHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +77,50 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navMenu = navigationView.getMenu();
 
         MenuItem item = navigationView.getMenu().getItem(0);
         if (item != null) {
             onNavigationItemSelected(item);
         }
+        retrieveDrawerMenu();
+    }
+
+    private void retrieveDrawerMenu() {
+        OkGo.get(getThemeListURL())
+                .tag(this)
+                .cacheKey("cacheKey")
+                .cacheMode(CacheMode.DEFAULT)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String s, Call call, Response response) {
+                        themes = getThemesList(s);
+                        if (themes != null) {
+                            Message msg = new Message();
+                            msg.what = UPDATE_DRAWER_MENU;
+                            handler.sendMessage(msg);
+                        }
+                    }
+                });
+    }
+
+    private void updateDrawerMenu() {
+        int maxId = 0;
+        for (int i = 0; i < themes.size(); i++) {
+            Theme theme = themes.get(i);
+            navMenu.add(0, theme.getId(), Menu.NONE, theme.getName());
+            maxId = max(maxId, theme.getId());
+        }
+        themeIdx = new int[maxId + 1];
+        for (int i = 0; i < themes.size(); i++) {
+            themeIdx[themes.get(i).getId()] = i;
+        }
+        navMenu.setGroupCheckable(0, true, true);
     }
 
     @Override
@@ -121,27 +177,29 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        String tag;
-        Fragment fg;
+        String tag, url, title;
 
-        switch (id) {
-            case R.id.nav_home:
-            default:
-                fg = StoryListFragment.newInstance(STORY_CONTENT_PREFIX + STORY_LATEST);
-                tag = "story_home";
-                break;
+        if (id == R.id.nav_home) {
+            url = getLatestStoryListURL();
+            tag = "story_home";
+            title = "首页";
+        } else {
+            url = getThemeDescURL(id);
+            tag = themes.get(themeIdx[id]).toString();
+            title = themes.get(themeIdx[id]).getName();
         }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.story_list_fl, fg, tag)
+                .replace(R.id.story_list_fl, StoryListFragment.newInstance(url), tag)
                 .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         item.setChecked(true);
+        setTitle(title);
         return true;
     }
 }

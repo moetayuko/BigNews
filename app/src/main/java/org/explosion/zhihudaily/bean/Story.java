@@ -14,10 +14,6 @@ public class Story extends StoryBase {
         return images;
     }
 
-    public String getImage() {
-        return images.get(0);
-    }
-
     public boolean isMultipic() {
         return multipic;
     }

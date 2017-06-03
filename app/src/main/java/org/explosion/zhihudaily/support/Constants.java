@@ -6,8 +6,11 @@ package org.explosion.zhihudaily.support;
 
 public final class Constants {
     public static final class URL {
-        public static final String STORY_CONTENT_PREFIX = "http://news-at.zhihu.com/api/4/news/";
-        public static final String STORY_LATEST = "latest";
+        public static final String API_PREFIX = "http://news-at.zhihu.com/api/4/";
+        public static final String STORY_PREFIX = "news/";
+        public static final String THEME_PREFIX = "theme/";
+        public static final String THEMES_SUFFIX = "themes";
+        public static final String LATEST_STORY_SUFFIX = "latest";
     }
 
     public static final class KEY {

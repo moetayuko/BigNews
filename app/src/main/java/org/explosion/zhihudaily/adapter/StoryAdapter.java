@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import java.util.List;
  */
 
 public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
+
+    private static final String TAG = "StoryAdapter";
 
     private Context mContext;
 
@@ -71,7 +74,13 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Story story = mStoryList.get(position);
         holder.storyTitle.setText(story.getTitle());
-        Glide.with(mContext).load(story.getImage()).into(holder.storyImage);
+        if (story.getImages() == null) {
+            holder.storyImage.setVisibility(View.GONE);
+            Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
+        } else {
+            holder.storyImage.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(story.getImages().get(0)).into(holder.storyImage);
+        }
     }
 
     @Override

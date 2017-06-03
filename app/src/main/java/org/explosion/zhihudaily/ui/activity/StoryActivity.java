@@ -24,6 +24,8 @@ import org.explosion.zhihudaily.support.Constants;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import static org.explosion.zhihudaily.helper.WebUtils.getStoryURL;
+
 public class StoryActivity extends AppCompatActivity {
 
     private static final String TAG = "StoryActivity";
@@ -90,7 +92,7 @@ public class StoryActivity extends AppCompatActivity {
         int storyId = getIntent().getIntExtra(Constants.KEY.STORY_ID, -1);
         if (storyId == -1)
             return;
-        OkGo.get(Constants.URL.STORY_CONTENT_PREFIX + Integer.toString(storyId))
+        OkGo.get(getStoryURL(storyId))
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)

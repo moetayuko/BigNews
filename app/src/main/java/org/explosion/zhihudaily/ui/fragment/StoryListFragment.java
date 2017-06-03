@@ -32,6 +32,8 @@ import static org.explosion.zhihudaily.helper.UIUtils.notifyNetworkError;
 
 public class StoryListFragment extends Fragment {
 
+    private static final String TAG = "StoryListFragment";
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton scrollToTop;
     private RecyclerView storyListView;
@@ -67,7 +69,7 @@ public class StoryListFragment extends Fragment {
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    requestDailyStory();
+                    retrieveStoryList();
                 }
             });
 
@@ -91,7 +93,7 @@ public class StoryListFragment extends Fragment {
         });
 
         setupStoryListView(rootView);
-        requestDailyStory();
+        retrieveStoryList();
 
         return rootView;
     }
@@ -119,7 +121,7 @@ public class StoryListFragment extends Fragment {
         });
     }
 
-    private void requestDailyStory() {
+    private void retrieveStoryList() {
         OkGo.get(storyListURL)
                 .tag(this)
                 .cacheKey("cacheKey")

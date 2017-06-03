@@ -3,6 +3,8 @@ package org.explosion.zhihudaily.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -30,25 +32,28 @@ public class StoryActivity extends AppCompatActivity {
 
     private static final String TAG = "StoryActivity";
 
-    WebView webView;
-    ImageView headImage;
-    StoryContent storyContent;
-    Toolbar toolbar;
-    net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout collapsingToolbarLayout;
+    private WebView webView;
+    private ImageView headImage;
+    private StoryContent storyContent;
+    private net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout collapsingToolbarLayout;
+    private AppBarLayout appBarLayout;
+    private NestedScrollView nestedScrollView;
 
-    Context mContext;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story);
 
-        toolbar = (Toolbar) findViewById(R.id.story_toolbar);
         webView = (WebView) findViewById(R.id.story_web_view);
         headImage = (ImageView) findViewById(R.id.head_image);
         collapsingToolbarLayout = (net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        nestedScrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view_wv);
         mContext = getApplicationContext();
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.story_toolbar);
         toolbar.setTitle(" ");
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -104,9 +109,17 @@ public class StoryActivity extends AppCompatActivity {
 
                         String html = WebUtils.buildHtmlWithCss(storyContent.getBody(), storyContent.getCss());
                         webView.loadDataWithBaseURL(null, html, WebUtils.MIME_TYPE, WebUtils.ENCODING, null);
-                        Glide.with(mContext).load(storyContent.getImage()).into(headImage);
+                        if (storyContent.getImage() == null) {
+                            disableAppbarCollapse();
+                        } else {
+                            Glide.with(mContext).load(storyContent.getImage()).into(headImage);
+                        }
                     }
                 });
     }
 
+    private void disableAppbarCollapse() {
+        appBarLayout.setExpanded(false);
+        nestedScrollView.setNestedScrollingEnabled(false);
+    }
 }

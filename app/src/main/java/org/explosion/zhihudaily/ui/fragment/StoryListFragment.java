@@ -16,10 +16,11 @@ import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
 
 import org.explosion.zhihudaily.R;
+import org.explosion.zhihudaily.adapter.EndlessRecyclerViewScrollListener;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
-import org.explosion.zhihudaily.helper.parseJSON;
+import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.support.Constants;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import static org.explosion.zhihudaily.helper.UIUtils.notifyNetworkError;
+import static org.explosion.zhihudaily.helper.WebUtils.getDailyStoryByDate;
+import static org.explosion.zhihudaily.support.Constants.KEY.STORY_LIST_TYPE;
 
 public class StoryListFragment extends Fragment {
 
@@ -38,6 +41,7 @@ public class StoryListFragment extends Fragment {
     private FloatingActionButton scrollToTop;
     private RecyclerView storyListView;
     private StoryAdapter adapter;
+    private LinearLayoutManager layoutManager;
 
     private List<Story> storyList = new ArrayList<>();
     private DailyStory dailyStory;
@@ -50,10 +54,11 @@ public class StoryListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static StoryListFragment newInstance(String url) {
+    public static StoryListFragment newInstance(String url, boolean isTheme) {
         StoryListFragment fragment = new StoryListFragment();
         Bundle args = new Bundle();
         args.putString(Constants.KEY.STORY_LIST_URL, url);
+        args.putBoolean(STORY_LIST_TYPE, isTheme);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,11 +75,9 @@ public class StoryListFragment extends Fragment {
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    retrieveStoryList();
+                    retrieveStoryList(true);
                 }
             });
-
-            storyListURL = getArguments().getString(Constants.KEY.STORY_LIST_URL);
         }
     }
 
@@ -88,26 +91,32 @@ public class StoryListFragment extends Fragment {
         scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int position = layoutManager.getPosition(layoutManager.getChildAt(0));
+                if (position > 20) {
+                    storyListView.scrollToPosition(20);
+                }
                 storyListView.smoothScrollToPosition(0);
                 scrollToTop.hide();
             }
         });
 
         setupStoryListView(rootView);
-        retrieveStoryList();
+        retrieveStoryList(true);
 
         return rootView;
     }
 
     private void setupStoryListView(View view) {
         storyListView = (RecyclerView) view.findViewById(R.id.story_list);
-        storyListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        layoutManager = new LinearLayoutManager(getActivity());
+        storyListView.setLayoutManager(layoutManager);
 
         adapter = new StoryAdapter(storyList);
         storyListView.setAdapter(adapter);
-        storyListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        storyListView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
                     scrollToTop.hide();
             }
@@ -119,10 +128,18 @@ public class StoryListFragment extends Fragment {
                     scrollToTop.show();
                 super.onScrollStateChanged(recyclerView, newState);
             }
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMoreStories();
+            }
         });
     }
 
-    private void retrieveStoryList() {
+    private void retrieveStoryList(final boolean isRefreshing) {
+        if (isRefreshing) {
+            storyListURL = getArguments().getString(Constants.KEY.STORY_LIST_URL);
+        }
         OkGo.get(storyListURL)
                 .tag(this)
                 .cacheKey("cacheKey")
@@ -130,9 +147,10 @@ public class StoryListFragment extends Fragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        dailyStory = parseJSON.getDailyStories(s);
-                        if (dailyStory != null)
-                            updateStoryList();
+                        dailyStory = ParseJSON.getDailyStories(s);
+                        if (dailyStory != null) {
+                            updateStoryList(isRefreshing);
+                        }
                     }
 
                     @Override
@@ -146,12 +164,21 @@ public class StoryListFragment extends Fragment {
                 });
     }
 
-    private void updateStoryList() {
-        storyList.clear();
+    private void updateStoryList(boolean isRefreshing) {
+        if (isRefreshing) {
+            storyList.clear();
+        }
         storyList.addAll(dailyStory.getStories());
         adapter.notifyDataSetChanged();
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private void loadMoreStories() {
+        if (!getArguments().getBoolean(STORY_LIST_TYPE)) {
+            storyListURL = getDailyStoryByDate(dailyStory.getDate());
+            retrieveStoryList(false);
         }
     }
 }

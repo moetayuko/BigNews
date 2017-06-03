@@ -4,6 +4,7 @@ import java.util.List;
 
 import static org.explosion.zhihudaily.support.Constants.URL.API_PREFIX;
 import static org.explosion.zhihudaily.support.Constants.URL.LATEST_STORY_SUFFIX;
+import static org.explosion.zhihudaily.support.Constants.URL.OLD_STORY_PREFIX;
 import static org.explosion.zhihudaily.support.Constants.URL.STORY_PREFIX;
 import static org.explosion.zhihudaily.support.Constants.URL.THEMES_SUFFIX;
 import static org.explosion.zhihudaily.support.Constants.URL.THEME_PREFIX;
@@ -44,5 +45,9 @@ public final class WebUtils {
 
     public static String getThemeDescURL(int id) {
         return API_PREFIX + THEME_PREFIX + Integer.toString(id);
+    }
+
+    public static String getDailyStoryByDate(String date) {
+        return API_PREFIX + STORY_PREFIX + OLD_STORY_PREFIX + date;
     }
 }

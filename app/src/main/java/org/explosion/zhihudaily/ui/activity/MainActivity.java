@@ -33,7 +33,7 @@ import static java.lang.Math.max;
 import static org.explosion.zhihudaily.helper.WebUtils.getLatestStoryListURL;
 import static org.explosion.zhihudaily.helper.WebUtils.getThemeDescURL;
 import static org.explosion.zhihudaily.helper.WebUtils.getThemeListURL;
-import static org.explosion.zhihudaily.helper.parseJSON.getThemesList;
+import static org.explosion.zhihudaily.helper.ParseJSON.getThemesList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -181,19 +181,22 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         String tag, url, title;
+        boolean isTheme;
 
         if (id == R.id.nav_home) {
             url = getLatestStoryListURL();
             tag = "story_home";
             title = "首页";
+            isTheme = false;
         } else {
             url = getThemeDescURL(id);
             tag = themes.get(themeIdx[id]).toString();
             title = themes.get(themeIdx[id]).getName();
+            isTheme = true;
         }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.story_list_fl, StoryListFragment.newInstance(url), tag)
+                .replace(R.id.story_list_fl, StoryListFragment.newInstance(url, isTheme), tag)
                 .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

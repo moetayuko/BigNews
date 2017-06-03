@@ -15,7 +15,7 @@ import java.util.List;
  * Created by dianlujitao on 17-4-25.
  */
 
-public final class parseJSON {
+public final class ParseJSON {
     public static DailyStory getDailyStories(String jsonData) {
         return new Gson().fromJson(jsonData, DailyStory.class);
     }

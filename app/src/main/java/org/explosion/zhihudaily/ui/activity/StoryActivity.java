@@ -20,7 +20,7 @@ import com.lzy.okgo.callback.StringCallback;
 import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.bean.StoryContent;
 import org.explosion.zhihudaily.helper.WebUtils;
-import org.explosion.zhihudaily.helper.parseJSON;
+import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.support.Constants;
 
 import okhttp3.Call;
@@ -104,7 +104,7 @@ public class StoryActivity extends AppCompatActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        storyContent = new StoryContent(parseJSON.getStoryContent(s));
+                        storyContent = new StoryContent(ParseJSON.getStoryContent(s));
                         collapsingToolbarLayout.setTitle(storyContent.getTitle());
 
                         String html = WebUtils.buildHtmlWithCss(storyContent.getBody(), storyContent.getCss());

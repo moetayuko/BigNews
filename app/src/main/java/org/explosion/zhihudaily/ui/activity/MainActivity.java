@@ -35,7 +35,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,11 +60,11 @@ import static org.explosion.zhihudaily.helper.WebUtils.getLatestStoryListURL;
 import static org.explosion.zhihudaily.helper.WebUtils.getThemeDescURL;
 import static org.explosion.zhihudaily.helper.WebUtils.getThemeListURL;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
 
-    boolean doubleBackToExitPressedOnce;
+    private boolean doubleBackToExitPressedOnce;
 
     private List<Theme> themes;
     private int[] themeIdx;
@@ -100,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,9 +119,7 @@ public class MainActivity extends AppCompatActivity
             onNavigationItemSelected(item);
         }
 
-        if (savedInstanceState == null) {
-            retrieveDrawerMenu();
-        }
+        retrieveDrawerMenu();
     }
 
     private void retrieveDrawerMenu() {

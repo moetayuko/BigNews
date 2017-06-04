@@ -50,7 +50,7 @@
             android:id="@+id/story_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/story_image"
+            android:layout_toEndOf="@+id/story_image"
             android:layout_alignParentTop="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/textColorPrimary"

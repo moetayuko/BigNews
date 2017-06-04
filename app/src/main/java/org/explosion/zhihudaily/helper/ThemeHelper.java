@@ -22,23 +22,26 @@
  * SOFTWARE.
  */
 
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.helper;
 
-import android.app.Application;
-
-import com.lzy.okgo.OkGo;
-
-import org.explosion.zhihudaily.helper.ThemeHelper;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
- * Created by dianlujitao on 17-4-25.
+ * Created by dianlujitao on 17-6-4.
  */
 
-public class ZhihuDaily extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        OkGo.init(this);
-        ThemeHelper.init(this);
+public class ThemeHelper {
+
+    private static SharedPreferences mSharedPreferences;
+
+    public static void init(Context context) {
+        Context appContext = context.getApplicationContext();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+    }
+
+    public static boolean isNightModeEnabled() {
+        return mSharedPreferences.getBoolean("night_mode_switch", false);
     }
 }

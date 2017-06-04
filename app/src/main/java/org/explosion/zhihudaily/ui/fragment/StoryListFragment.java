@@ -98,15 +98,6 @@ public class StoryListFragment extends Fragment {
         if (getArguments() != null) {
             mContext = getContext();
             isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
-
-            swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
-            swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    retrieveStoryList(true);
-                }
-            });
         }
     }
 
@@ -116,6 +107,16 @@ public class StoryListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_story_list, container, false);
 
+        setupScrollToTop();
+        setupSwipeRefresh();
+
+        setupStoryListView(rootView);
+        retrieveStoryList(true);
+
+        return rootView;
+    }
+
+    private void setupScrollToTop() {
         scrollToTop = (FloatingActionButton) getActivity().findViewById(R.id.scroll_to_top);
         scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,11 +129,17 @@ public class StoryListFragment extends Fragment {
                 scrollToTop.hide();
             }
         });
+    }
 
-        setupStoryListView(rootView);
-        retrieveStoryList(true);
-
-        return rootView;
+    private void setupSwipeRefresh() {
+        swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrieveStoryList(true);
+            }
+        });
     }
 
     private void setupStoryListView(View view) {

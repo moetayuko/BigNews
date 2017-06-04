@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +51,7 @@ import okhttp3.Response;
 
 import static org.explosion.zhihudaily.helper.WebUtils.getStoryURL;
 
-public class StoryActivity extends AppCompatActivity {
+public class StoryActivity extends BaseActivity {
 
     private static final String TAG = "StoryActivity";
 

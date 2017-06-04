@@ -44,14 +44,23 @@ public final class WebUtils {
 
     private static final String DIV_HEADLINE = "class=\"headline\"";
     private static final String DIV_HEADLINE_IGNORED = "class=\"headline-ignored\"";
+    private static final String NIGHT_DIV_TAG_START = "<div class=\"night\">";
+    private static final String NIGHT_DIV_TAG_END = "</div>";
 
     public static String buildHtmlWithCss(String html, List<String> cssUrls) {
         StringBuilder buf = new StringBuilder();
         for (String cssUrl : cssUrls) {
             buf.append(String.format(CSS_LINK_PATTERN, cssUrl));
         }
+        boolean isNightMode = ThemeHelper.isNightModeEnabled();
+        if (isNightMode) {
+            buf.append(NIGHT_DIV_TAG_START);
+        }
         // Hack: 去掉HTML中为顶部图片预留的空间
         buf.append(html.replace(DIV_HEADLINE, DIV_HEADLINE_IGNORED));
+        if (isNightMode) {
+            buf.append(NIGHT_DIV_TAG_END);
+        }
         return buf.toString();
     }
 

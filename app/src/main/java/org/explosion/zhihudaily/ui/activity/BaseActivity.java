@@ -22,23 +22,26 @@
  * SOFTWARE.
  */
 
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.ui.activity;
 
-import android.app.Application;
-
-import com.lzy.okgo.OkGo;
+import android.app.UiModeManager;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import org.explosion.zhihudaily.helper.ThemeHelper;
 
-/**
- * Created by dianlujitao on 17-4-25.
- */
+public class BaseActivity extends AppCompatActivity {
 
-public class ZhihuDaily extends Application {
+    protected UiModeManager uiManager;
+
     @Override
-    public void onCreate() {
-        super.onCreate();
-        OkGo.init(this);
-        ThemeHelper.init(this);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        uiManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+        if (ThemeHelper.isNightModeEnabled()) {
+            uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
+        }
+        super.onCreate(savedInstanceState);
     }
 }

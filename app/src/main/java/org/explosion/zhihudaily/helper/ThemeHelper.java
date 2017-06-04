@@ -22,43 +22,25 @@
  * SOFTWARE.
  */
 
-package org.explosion.zhihudaily;
+package org.explosion.zhihudaily.helper;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-
-import com.bilibili.magicasakura.utils.ThemeUtils;
-import com.lzy.okgo.OkGo;
-
-import org.explosion.zhihudaily.helper.ThemeHelper;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 
 /**
- * Created by dianlujitao on 17-4-25.
+ * Created by dianlujitao on 17-6-4.
  */
 
-public class ZhihuDaily extends Application implements ThemeUtils.switchColor {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        OkGo.init(this);
-        ThemeUtils.setSwitchColor(this);
+public class ThemeHelper {
+
+    public static SharedPreferences getSharePreference(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    @Override
-    public int replaceColorById(Context context, @ColorRes int colorId) {
-        if (ThemeHelper.isNightModeEnabled(context)) {
-
-        }
-        return context.getResources().getColor(colorId);
-    }
-
-    @Override
-    public int replaceColor(Context context, @ColorInt int originColor) {
-        if (ThemeHelper.isNightModeEnabled(context)) {
-
-        }
-        return context.
+    public static boolean isNightModeEnabled(Context context) {
+        return getSharePreference(context).getBoolean("night_mode_switch", false);
     }
 }

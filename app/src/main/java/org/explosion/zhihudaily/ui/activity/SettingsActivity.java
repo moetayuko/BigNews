@@ -28,22 +28,23 @@ package org.explosion.zhihudaily.ui.activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.explosion.zhihudaily.R;
+import org.explosion.zhihudaily.helper.ThemeHelper;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
+    private static final String TAG = "SettingsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +54,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     public static class PrefFragment extends PreferenceFragment {
+
+        private SwitchPreference nightModeSwitch;
+        private Context mContext;
+
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.prefs);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            nightModeSwitch = (SwitchPreference) getPreferenceManager().findPreference("night_mode_switch");
+            nightModeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    return true;
+                }
+            });
+            return super.onCreateView(inflater, container, savedInstanceState);
+        }
+
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            mContext = context;
         }
     }
 
@@ -79,14 +102,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
     }
 
 }

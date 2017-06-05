@@ -30,7 +30,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import org.explosion.zhihudaily.helper.ThemeHelper;
+import org.explosion.zhihudaily.helper.PreferenceHelper;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         uiManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-        if (ThemeHelper.isNightModeEnabled()) {
+        if (PreferenceHelper.isNightModeEnabled()) {
             uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
         }
         super.onCreate(savedInstanceState);

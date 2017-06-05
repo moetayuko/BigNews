@@ -28,7 +28,7 @@ import android.app.Application;
 
 import com.lzy.okgo.OkGo;
 
-import org.explosion.zhihudaily.helper.ThemeHelper;
+import org.explosion.zhihudaily.helper.PreferenceHelper;
 
 /**
  * Created by dianlujitao on 17-4-25.
@@ -39,6 +39,6 @@ public class ZhihuDaily extends Application {
     public void onCreate() {
         super.onCreate();
         OkGo.init(this);
-        ThemeHelper.init(this);
+        PreferenceHelper.init(this);
     }
 }

@@ -37,7 +37,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import org.explosion.zhihudaily.R;
-import org.explosion.zhihudaily.helper.ThemeHelper;
+import org.explosion.zhihudaily.helper.PreferenceHelper;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             nightModeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean nextNightMode = !ThemeHelper.isNightModeEnabled();
+                    boolean nextNightMode = !PreferenceHelper.isNightModeEnabled();
                     if (nextNightMode) {
                         uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
                     } else {

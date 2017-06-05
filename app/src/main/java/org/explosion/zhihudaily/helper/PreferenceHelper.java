@@ -32,7 +32,7 @@ import android.preference.PreferenceManager;
  * Created by dianlujitao on 17-6-4.
  */
 
-public class ThemeHelper {
+public class PreferenceHelper {
 
     private static SharedPreferences mSharedPreferences;
 

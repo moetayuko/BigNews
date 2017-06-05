@@ -52,7 +52,7 @@ public final class WebUtils {
         for (String cssUrl : cssUrls) {
             buf.append(String.format(CSS_LINK_PATTERN, cssUrl));
         }
-        boolean isNightMode = ThemeHelper.isNightModeEnabled();
+        boolean isNightMode = PreferenceHelper.isNightModeEnabled();
         if (isNightMode) {
             buf.append(NIGHT_DIV_TAG_START);
         }

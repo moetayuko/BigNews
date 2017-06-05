@@ -70,7 +70,8 @@ public class MainActivity extends BaseActivity
     private int[] themeIdx;
 
     private Menu navMenu;
-    private Fragment fragment;
+
+    private static String lastFgTag;
 
     private static final int UPDATE_DRAWER_MENU = 10000;
 
@@ -115,7 +116,7 @@ public class MainActivity extends BaseActivity
         navMenu = navigationView.getMenu();
 
         MenuItem item = navigationView.getMenu().getItem(0);
-        if (item != null) {
+        if (item != null && lastFgTag == null) {
             onNavigationItemSelected(item);
         }
 
@@ -229,8 +230,10 @@ public class MainActivity extends BaseActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        if (fragment != null) {
-            ft.hide(fragment);
+
+        Fragment lastFg = getSupportFragmentManager().findFragmentByTag(lastFgTag);
+        if (lastFg != null) {
+            ft.hide(lastFg);
         }
         Fragment nextFg = getSupportFragmentManager().findFragmentByTag(tag);
         if (nextFg == null) {
@@ -239,7 +242,7 @@ public class MainActivity extends BaseActivity
         } else {
             ft.show(nextFg);
         }
-        fragment = nextFg;
+        lastFgTag = nextFg.getTag();
 
         ft.commit();
 

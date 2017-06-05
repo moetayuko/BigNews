@@ -27,11 +27,13 @@ package org.explosion.zhihudaily.ui.activity;
 
 import android.app.UiModeManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import org.explosion.zhihudaily.R;
@@ -51,12 +53,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class PrefFragment extends PreferenceFragment {
 
         private SwitchPreference nightModeSwitch;
+        private Preference about;
         private UiModeManager uiManager;
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.prefs);
+
+            setupNightModeSwitch();
+            setupAbout();
+        }
+
+        private void setupNightModeSwitch() {
             uiManager = (UiModeManager) getActivity().getSystemService(Context.UI_MODE_SERVICE);
             nightModeSwitch = (SwitchPreference) getPreferenceManager().findPreference("night_mode_switch");
             nightModeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -68,6 +77,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     } else {
                         uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
                     }
+                    return true;
+                }
+            });
+        }
+
+        private void setupAbout() {
+            about = getPreferenceManager().findPreference("about");
+            about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("The MIT License (MIT)")
+                            .setMessage(R.string.mit_license)
+                            .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
                     return true;
                 }
             });

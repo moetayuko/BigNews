@@ -24,6 +24,10 @@
 
 package org.explosion.zhihudaily.helper;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.util.List;
 
 import static org.explosion.zhihudaily.support.Constants.URL.API_PREFIX;
@@ -82,5 +86,23 @@ public final class WebUtils {
 
     public static String getDailyStoryByDate(String date) {
         return API_PREFIX + STORY_PREFIX + OLD_STORY_PREFIX + date;
+    }
+
+    public static boolean isCellularDataLessModeEnabled() {
+        NetworkInfo info = ((ConnectivityManager) PreferenceHelper.getAppContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .getActiveNetworkInfo();
+
+        if (PreferenceHelper.isCellularDataLessModeEnabled() &&
+                info != null && info.isConnected()) {
+            int netType = info.getType();
+
+            if (netType == ConnectivityManager.TYPE_WIFI) {
+                return false;
+            } else if (netType == ConnectivityManager.TYPE_MOBILE) {
+                return true;
+            }
+        }
+        return false;
     }
 }

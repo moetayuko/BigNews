@@ -46,6 +46,7 @@ import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
+import org.explosion.zhihudaily.helper.WebUtils;
 import org.explosion.zhihudaily.support.Constants;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class StoryListFragment extends Fragment {
     private String storyListURL;
 
     private Boolean isTheme;
+    private Boolean savedCellularDataModeState;
 
     public StoryListFragment() {
         // Required empty public constructor
@@ -98,6 +100,7 @@ public class StoryListFragment extends Fragment {
         if (getArguments() != null) {
             mContext = getContext();
             isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
+            savedCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
         }
     }
 
@@ -209,6 +212,11 @@ public class StoryListFragment extends Fragment {
             if (!isTheme) {
                 topStoryList.clear();
                 topStoryList.addAll(dailyStory.getTopStories());
+                boolean newCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
+                if (savedCellularDataModeState != newCellularDataModeState) {
+                    savedCellularDataModeState = newCellularDataModeState;
+                    storyListView.removeAllViewsInLayout();
+                }
             }
         }
         storyList.addAll(dailyStory.getStories());

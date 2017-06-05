@@ -43,6 +43,7 @@ import org.explosion.zhihudaily.R;
 import org.explosion.zhihudaily.bean.BannerItem;
 import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.bean.TopStory;
+import org.explosion.zhihudaily.helper.WebUtils;
 import org.explosion.zhihudaily.support.Constants;
 import org.explosion.zhihudaily.ui.activity.StoryActivity;
 
@@ -64,6 +65,8 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private List<Story> mStoryList;
     private List<TopStory> mTopStoryList;
+
+    private boolean showBanner;
 
     private static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -90,6 +93,8 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public StoryAdapter(List<Story> storyList, List<TopStory> topStoryList) {
         mStoryList = storyList;
         mTopStoryList = topStoryList;
+        showBanner = (mTopStoryList != null) &&
+                !WebUtils.isCellularDataLessModeEnabled();
     }
 
     @Override
@@ -122,13 +127,16 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public int getItemViewType(int position) {
-        if (mTopStoryList != null && position == 0)
+        if (showBanner && position == 0)
             return TYPE_BANNER;
         return TYPE_NORMAL;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        showBanner = (mTopStoryList != null) &&
+                !WebUtils.isCellularDataLessModeEnabled();
+
         switch (holder.getItemViewType()) {
             case TYPE_BANNER:
                 List<BannerItem> bannerItemList = new ArrayList<>();
@@ -155,10 +163,13 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
             case TYPE_NORMAL:
                 int pos = getRealPosition(holder);
+                if (pos < 0) {
+                    break;
+                }
                 Story story = mStoryList.get(pos);
                 ViewHolder viewHolder = (ViewHolder) holder;
                 viewHolder.storyTitle.setText(story.getTitle());
-                if (story.getImages() == null) {
+                if (story.getImages() == null || WebUtils.isCellularDataLessModeEnabled()) {
                     viewHolder.storyImage.setVisibility(View.GONE);
                     Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
                 } else {
@@ -173,7 +184,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private int getRealPosition(RecyclerView.ViewHolder holder) {
         int position = holder.getLayoutPosition();
-        return mTopStoryList == null ? position : position - 1;
+        return showBanner ? position - 1 : position;
     }
 
     @Override

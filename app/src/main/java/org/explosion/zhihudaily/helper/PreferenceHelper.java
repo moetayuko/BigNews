@@ -35,13 +35,22 @@ import android.preference.PreferenceManager;
 public class PreferenceHelper {
 
     private static SharedPreferences mSharedPreferences;
+    private static Context appContext;
 
     public static void init(Context context) {
-        Context appContext = context.getApplicationContext();
+        appContext = context.getApplicationContext();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContext);
     }
 
     public static boolean isNightModeEnabled() {
         return mSharedPreferences.getBoolean("night_mode_switch", false);
+    }
+
+    static boolean isCellularDataLessModeEnabled() {
+        return mSharedPreferences.getBoolean("cellular_data_less_mode_switch", false);
+    }
+
+    static Context getAppContext() {
+        return appContext;
     }
 }

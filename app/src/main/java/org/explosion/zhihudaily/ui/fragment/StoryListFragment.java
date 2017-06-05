@@ -107,7 +107,7 @@ public class StoryListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_story_list, container, false);
 
-        setupScrollToTop();
+        setupScrollToTop(rootView);
         setupSwipeRefresh();
 
         setupStoryListView(rootView);
@@ -116,8 +116,8 @@ public class StoryListFragment extends Fragment {
         return rootView;
     }
 
-    private void setupScrollToTop() {
-        scrollToTop = (FloatingActionButton) getActivity().findViewById(R.id.scroll_to_top);
+    private void setupScrollToTop(View view) {
+        scrollToTop = (FloatingActionButton) view.findViewById(R.id.scroll_to_top);
         scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

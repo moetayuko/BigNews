@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity
         retrieveDrawerMenu();
     }
 
-    private void retrieveDrawerMenu() {
+    public void retrieveDrawerMenu() {
         OkGo.get(getThemeListURL())
                 .tag(this)
                 .cacheKey("cacheKey")

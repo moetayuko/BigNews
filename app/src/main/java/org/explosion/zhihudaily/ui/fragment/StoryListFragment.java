@@ -48,6 +48,7 @@ import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.helper.WebUtils;
 import org.explosion.zhihudaily.support.Constants;
+import org.explosion.zhihudaily.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,6 +141,7 @@ public class StoryListFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                ((MainActivity) getActivity()).retrieveDrawerMenu();
                 retrieveStoryList(true);
             }
         });

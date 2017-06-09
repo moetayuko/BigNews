@@ -66,6 +66,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setupNightModeSwitch() {
+            // 设置夜间模式
             uiManager = (UiModeManager) getActivity().getSystemService(Context.UI_MODE_SERVICE);
             nightModeSwitch = (SwitchPreference) getPreferenceManager().findPreference("night_mode_switch");
             nightModeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -83,6 +84,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setupAbout() {
+            // 点击关于，显示License
             about = getPreferenceManager().findPreference("about");
             about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override

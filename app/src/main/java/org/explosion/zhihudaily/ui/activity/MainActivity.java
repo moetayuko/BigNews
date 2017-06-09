@@ -86,6 +86,7 @@ public class MainActivity extends BaseActivity
         public void handleMessage(Message msg) {
             MainActivity activity = mActivity.get();
             switch (msg.what) {
+                // 获取drawer数据后异步更新
                 case UPDATE_DRAWER_MENU:
                     activity.updateDrawerMenu();
                     break;
@@ -102,9 +103,11 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        // 设置Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // 设置侧滑导航栏
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -115,11 +118,13 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
         navMenu = navigationView.getMenu();
 
+        // 新建Activity时模拟点击首页
         MenuItem item = navigationView.getMenu().getItem(0);
         if (item != null && lastFgTag == null) {
             onNavigationItemSelected(item);
         }
 
+        // 获取侧滑导航栏项目
         retrieveDrawerMenu();
     }
 
@@ -132,6 +137,7 @@ public class MainActivity extends BaseActivity
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
                         themes = getThemesList(s);
+                        // 获取导航栏内容后异步更新UI
                         if (themes != null) {
                             Message msg = new Message();
                             msg.what = UPDATE_DRAWER_MENU;
@@ -141,6 +147,7 @@ public class MainActivity extends BaseActivity
                 });
     }
 
+    // 生成菜单item加入导航栏
     private void updateDrawerMenu() {
         int maxId = 0;
         for (int i = 0; i < themes.size(); i++) {
@@ -167,6 +174,7 @@ public class MainActivity extends BaseActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            // 实现点击两次返回键退出程序
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
                 return;
@@ -229,8 +237,10 @@ public class MainActivity extends BaseActivity
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
+        // Fragment切换动画
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
+        // 如果将要切换的Fragment已经存在则隐藏当前fragment并显示新fragment，否则新建fragment实例
         Fragment lastFg = getSupportFragmentManager().findFragmentByTag(lastFgTag);
         if (lastFg != null) {
             ft.hide(lastFg);

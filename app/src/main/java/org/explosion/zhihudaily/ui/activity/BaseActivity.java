@@ -38,6 +38,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // 创建Activity时设置夜间模式
         uiManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
         if (PreferenceHelper.isNightModeEnabled()) {
             uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);

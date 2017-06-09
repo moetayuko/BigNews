@@ -100,7 +100,9 @@ public class StoryListFragment extends Fragment {
 
         if (getArguments() != null) {
             mContext = getContext();
+            // 获取Fragment状态（首页或主题新闻）
             isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
+            // 获取初始省流模式状态
             savedCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
         }
     }
@@ -120,12 +122,14 @@ public class StoryListFragment extends Fragment {
         return rootView;
     }
 
+    // 设置回到顶部按钮
     private void setupScrollToTop(View view) {
         scrollToTop = (FloatingActionButton) view.findViewById(R.id.scroll_to_top);
         scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position = layoutManager.getPosition(layoutManager.getChildAt(0));
+                // 若当前位置大于20则直接回到20后再缓慢回到顶部，以解决动画过长的问题
                 if (position > 20) {
                     storyListView.scrollToPosition(20);
                 }
@@ -135,12 +139,15 @@ public class StoryListFragment extends Fragment {
         });
     }
 
+    // 设置下拉刷新
     private void setupSwipeRefresh() {
         swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
+        // 进度条颜色
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                // 刷新导航栏及故事列表
                 ((MainActivity) getActivity()).retrieveDrawerMenu();
                 retrieveStoryList(true);
             }
@@ -161,12 +168,14 @@ public class StoryListFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                // 已经在顶部或滑动时隐藏回到顶部按钮
                 if (dy > 0 || (dy < 0 && scrollToTop.isShown()))
                     scrollToTop.hide();
             }
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                // 滑动停止且没有回到顶部时显示回到顶部按钮
                 if (newState == RecyclerView.SCROLL_STATE_IDLE &&
                         storyListView.canScrollVertically(-1))
                     scrollToTop.show();
@@ -175,13 +184,16 @@ public class StoryListFragment extends Fragment {
 
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // 上拉加载更多
                 loadMoreStories();
             }
         });
     }
 
+    // 获取故事列表
     private void retrieveStoryList(final boolean isRefreshing) {
         if (isRefreshing) {
+            // 获取URL
             storyListURL = getArguments().getString(Constants.KEY.STORY_LIST_URL);
         }
         OkGo.get(storyListURL)
@@ -191,6 +203,7 @@ public class StoryListFragment extends Fragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
+                        // 获取成功，更新UI
                         dailyStory = ParseJSON.getDailyStories(s);
                         if (dailyStory != null) {
                             updateStoryList(isRefreshing);
@@ -199,6 +212,7 @@ public class StoryListFragment extends Fragment {
 
                     @Override
                     public void onError(Call call, Response response, Exception e) {
+                        // 获取失败，提示网络错误
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -209,11 +223,14 @@ public class StoryListFragment extends Fragment {
     }
 
     private void updateStoryList(boolean isRefreshing) {
+        // 如果是刷新则清空当前数据
         if (isRefreshing) {
             storyList.clear();
+            // 首页，带Banner
             if (!isTheme) {
                 topStoryList.clear();
                 topStoryList.addAll(dailyStory.getTopStories());
+                // 省流模式状态变化，强制回收RecyclerView再重建
                 boolean newCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
                 if (savedCellularDataModeState != newCellularDataModeState) {
                     savedCellularDataModeState = newCellularDataModeState;
@@ -221,6 +238,7 @@ public class StoryListFragment extends Fragment {
                 }
             }
         }
+        // 加载更多数据
         storyList.addAll(dailyStory.getStories());
         adapter.notifyDataSetChanged();
         if (swipeRefreshLayout.isRefreshing()) {
@@ -229,6 +247,7 @@ public class StoryListFragment extends Fragment {
     }
 
     private void loadMoreStories() {
+        // 上拉加载仅首页可用
         if (!isTheme) {
             storyListURL = getDailyStoryByDate(dailyStory.getDate());
             retrieveStoryList(false);

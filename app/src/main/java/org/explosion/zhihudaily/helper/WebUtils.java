@@ -53,11 +53,11 @@ public final class WebUtils {
 
     public static String buildHtmlWithCss(String html, List<String> cssUrls) {
         StringBuilder buf = new StringBuilder();
-        for (String cssUrl : cssUrls) {
+        for (String cssUrl : cssUrls) { // 在HTML中引入Css
             buf.append(String.format(CSS_LINK_PATTERN, cssUrl));
         }
         boolean isNightMode = PreferenceHelper.isNightModeEnabled();
-        if (isNightMode) {
+        if (isNightMode) { // 夜间模式状态写入HTML
             buf.append(NIGHT_DIV_TAG_START);
         }
         // Hack: 去掉HTML中为顶部图片预留的空间
@@ -88,6 +88,7 @@ public final class WebUtils {
         return API_PREFIX + STORY_PREFIX + OLD_STORY_PREFIX + date;
     }
 
+    // 省流模式状态，设置中打开且当前使用移动数据时为开，否则为关
     public static boolean isCellularDataLessModeEnabled() {
         NetworkInfo info = ((ConnectivityManager) PreferenceHelper.getAppContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE))

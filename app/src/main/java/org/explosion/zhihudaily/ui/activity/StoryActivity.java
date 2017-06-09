@@ -73,6 +73,7 @@ public class StoryActivity extends BaseActivity {
 
         webView = (WebView) findViewById(R.id.story_web_view);
         headImage = (ImageView) findViewById(R.id.head_image);
+        // 支持多行Title的CollapsingToolbarLayout
         collapsingToolbarLayout = (net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         nestedScrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view_wv);
@@ -81,12 +82,12 @@ public class StoryActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.story_toolbar);
         toolbar.setTitle(" ");
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) { // Toolbar返回按钮
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         saveCellularData = WebUtils.isCellularDataLessModeEnabled();
-        if (saveCellularData) {
+        if (saveCellularData) { // 省流模式下不加载图片
             webView.getSettings().setLoadsImagesAutomatically(false);
         }
         loadStory();
@@ -139,6 +140,7 @@ public class StoryActivity extends BaseActivity {
                         String html = WebUtils.buildHtmlWithCss(storyContent.getBody(), storyContent.getCss());
                         webView.loadDataWithBaseURL(null, html, WebUtils.MIME_TYPE, WebUtils.ENCODING, null);
                         if (storyContent.getImage() == null || saveCellularData) {
+                            // 无头图或省流模式打开
                             disableAppbarCollapse();
                         } else {
                             Glide.with(mContext).load(storyContent.getImage()).into(headImage);

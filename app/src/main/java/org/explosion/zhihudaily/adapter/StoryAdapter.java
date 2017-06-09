@@ -58,12 +58,15 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final String TAG = "StoryAdapter";
 
+    // View类型
     private static final int TYPE_BANNER = 0;
     private static final int TYPE_NORMAL = 1;
 
     private Context mContext;
 
+    // 故事列表
     private List<Story> mStoryList;
+    // 头部Banner
     private List<TopStory> mTopStoryList;
 
     private boolean showBanner;
@@ -93,7 +96,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public StoryAdapter(List<Story> storyList, List<TopStory> topStoryList) {
         mStoryList = storyList;
         mTopStoryList = topStoryList;
-        showBanner = (mTopStoryList != null) &&
+        showBanner = (mTopStoryList != null) && // Banner非空且省流模式关闭时显示banner
                 !WebUtils.isCellularDataLessModeEnabled();
     }
 
@@ -104,10 +107,10 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         View view;
         final RecyclerView.ViewHolder holder;
 
-        if (viewType == TYPE_BANNER) {
+        if (viewType == TYPE_BANNER) { // 当前View为banner
             view = LayoutInflater.from(mContext).inflate(R.layout.banner, parent, false);
             holder = new BannerHolder(view);
-        } else {
+        } else { // 当前View为cardview
             view = LayoutInflater.from(mContext).inflate(R.layout.story_list_item,
                     parent, false);
             holder = new ViewHolder(view);
@@ -126,6 +129,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return holder;
     }
 
+    // 获取当前View的类型
     public int getItemViewType(int position) {
         if (showBanner && position == 0)
             return TYPE_BANNER;
@@ -169,10 +173,11 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 Story story = mStoryList.get(pos);
                 ViewHolder viewHolder = (ViewHolder) holder;
                 viewHolder.storyTitle.setText(story.getTitle());
+                // 当前Story无图片或省流模式打开，隐藏ImageView
                 if (story.getImages() == null || WebUtils.isCellularDataLessModeEnabled()) {
                     viewHolder.storyImage.setVisibility(View.GONE);
                     Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
-                } else {
+                } else { // 否则显示ImageView并加载图片
                     viewHolder.storyImage.setVisibility(View.VISIBLE);
                     Glide.with(mContext).load(story.getImages().get(0)).into(viewHolder.storyImage);
                 }
@@ -182,6 +187,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    // 获取带header的RecyclerView中元素的真实位置
     private int getRealPosition(RecyclerView.ViewHolder holder) {
         int position = holder.getLayoutPosition();
         return showBanner ? position - 1 : position;

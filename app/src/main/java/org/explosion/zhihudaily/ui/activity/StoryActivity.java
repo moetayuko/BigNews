@@ -114,7 +114,7 @@ public class StoryActivity extends BaseActivity {
                     shareIntent.setAction(Intent.ACTION_SEND);
                     shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
                     shareIntent.setType("text/plain");
-                    startActivity(shareIntent);
+                    startActivity(Intent.createChooser(shareIntent, "分享到..."));
                 }
                 break;
             default:

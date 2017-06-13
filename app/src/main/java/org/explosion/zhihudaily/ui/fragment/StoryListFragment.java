@@ -26,6 +26,7 @@ package org.explosion.zhihudaily.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,6 +49,7 @@ import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.helper.WebUtils;
 import org.explosion.zhihudaily.support.Constants;
+import org.explosion.zhihudaily.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +148,14 @@ public class StoryListFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    if (activity.isThemesEmpty()) {
+                        Message msg = new Message();
+                        msg.what = MainActivity.RETRIEVE_DRAWER_MENU;
+                        activity.handler.sendMessage(msg);
+                    }
+                }
                 retrieveStoryList(true);
             }
         });

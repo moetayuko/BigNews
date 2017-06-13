@@ -74,11 +74,12 @@ public class MainActivity extends BaseActivity
     private static String lastFgTag;
 
     private static final int UPDATE_DRAWER_MENU = 10000;
+    public static final int RETRIEVE_DRAWER_MENU = 10001;
 
-    private static class MyHandler extends Handler {
+    public static class EventHandler extends Handler {
         WeakReference<MainActivity> mActivity;
 
-        MyHandler(MainActivity activity) {
+        EventHandler(MainActivity activity) {
             mActivity = new WeakReference<>(activity);
         }
 
@@ -90,13 +91,16 @@ public class MainActivity extends BaseActivity
                 case UPDATE_DRAWER_MENU:
                     activity.updateDrawerMenu();
                     break;
+                case RETRIEVE_DRAWER_MENU:
+                    activity.retrieveDrawerMenu();
+                    break;
                 default:
                     break;
             }
         }
     }
 
-    MyHandler handler = new MyHandler(this);
+    public EventHandler handler = new EventHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,5 +265,9 @@ public class MainActivity extends BaseActivity
         item.setChecked(true);
         setTitle(title);
         return true;
+    }
+
+    public boolean isThemesEmpty() {
+        return themes == null;
     }
 }

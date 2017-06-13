@@ -26,12 +26,8 @@
 <resources>
     <color name="colorPrimaryDark">#ff222222</color>
     <color name="colorPrimary">#ff333333</color>
-    <color name="colorPrimaryLight">#BBDEFB</color>
     <color name="colorTextIcons">#FFFFFF</color>
     <color name="colorAccent">#00BCD4</color>
-    <color name="colorDivider">#232323</color>
     <color name="textColorPrimary">#999999</color>
-    <color name="textColorSecondary">#666666</color>
 
-    <color name="selectable_item_background_general_normal_dark">#ff3c3c3c</color>
 </resources>

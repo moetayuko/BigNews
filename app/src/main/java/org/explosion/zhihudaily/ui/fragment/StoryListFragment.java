@@ -125,7 +125,7 @@ public class StoryListFragment extends Fragment {
 
     // 设置回到顶部按钮
     private void setupScrollToTop(View view) {
-        scrollToTop = (FloatingActionButton) view.findViewById(R.id.scroll_to_top);
+        scrollToTop = view.findViewById(R.id.scroll_to_top);
         scrollToTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +142,7 @@ public class StoryListFragment extends Fragment {
 
     // 设置下拉刷新
     private void setupSwipeRefresh() {
-        swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.story_list_swipe_refresh);
+        swipeRefreshLayout = getActivity().findViewById(R.id.story_list_swipe_refresh);
         // 进度条颜色
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -162,7 +162,7 @@ public class StoryListFragment extends Fragment {
     }
 
     private void setupStoryListView(View view) {
-        storyListView = (RecyclerView) view.findViewById(R.id.story_list);
+        storyListView = view.findViewById(R.id.story_list);
         layoutManager = new LinearLayoutManager(getActivity());
         storyListView.setLayoutManager(layoutManager);
 

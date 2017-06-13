@@ -79,8 +79,8 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
-            storyImage = (ImageView) view.findViewById(R.id.story_image);
-            storyTitle = (TextView) view.findViewById(R.id.story_title);
+            storyImage = view.findViewById(R.id.story_image);
+            storyTitle = view.findViewById(R.id.story_title);
         }
     }
 
@@ -89,7 +89,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         BannerHolder(View view) {
             super(view);
-            banner = (BannerLayout) view.findViewById(R.id.banner);
+            banner = view.findViewById(R.id.banner);
         }
     }
 

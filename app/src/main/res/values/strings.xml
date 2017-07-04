@@ -23,7 +23,7 @@
   -->
 
 <resources>
-    <string name="app_name">知乎日报</string>
+    <string name="app_name">大新闻</string>
 
     <string name="navigation_drawer_open">打开导航栏</string>
     <string name="navigation_drawer_close">关闭导航栏</string>

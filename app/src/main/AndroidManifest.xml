@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.explosion.zhihudaily">
+    package="org.explosion.bignews">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".ZhihuDaily"
+        android:name="org.explosion.bignews.BigNews"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name="org.explosion.bignews.ui.activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -22,10 +22,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.SettingsActivity"
+            android:name="org.explosion.bignews.ui.activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".ui.activity.StoryActivity"
+            android:name="org.explosion.bignews.ui.activity.StoryActivity"
             android:label="@string/title_activity_story"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

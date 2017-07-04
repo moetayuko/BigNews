@@ -47,7 +47,6 @@ import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
 import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
-import org.explosion.zhihudaily.helper.WebUtils;
 import org.explosion.zhihudaily.support.Constants;
 import org.explosion.zhihudaily.ui.activity.MainActivity;
 
@@ -80,7 +79,6 @@ public class StoryListFragment extends Fragment {
     private String storyListURL;
 
     private Boolean isTheme;
-    private Boolean savedCellularDataModeState;
 
     public StoryListFragment() {
         // Required empty public constructor
@@ -103,8 +101,6 @@ public class StoryListFragment extends Fragment {
             mContext = getContext();
             // 获取Fragment状态（首页或主题新闻）
             isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
-            // 获取初始省流模式状态
-            savedCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
         }
     }
 
@@ -237,12 +233,6 @@ public class StoryListFragment extends Fragment {
             if (!isTheme) {
                 topStoryList.clear();
                 topStoryList.addAll(dailyStory.getTopStories());
-                // 省流模式状态变化，强制回收RecyclerView再重建
-                boolean newCellularDataModeState = WebUtils.isCellularDataLessModeEnabled();
-                if (savedCellularDataModeState != newCellularDataModeState) {
-                    savedCellularDataModeState = newCellularDataModeState;
-                    storyListView.removeAllViewsInLayout();
-                }
             }
         }
         // 加载更多数据

@@ -24,10 +24,6 @@
 
 package org.explosion.zhihudaily.helper;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import java.util.List;
 
 import static org.explosion.zhihudaily.support.Constants.URL.API_PREFIX;
@@ -86,24 +82,5 @@ public final class WebUtils {
 
     public static String getDailyStoryByDate(String date) {
         return API_PREFIX + STORY_PREFIX + OLD_STORY_PREFIX + date;
-    }
-
-    // 省流模式状态，设置中打开且当前使用移动数据时为开，否则为关
-    public static boolean isCellularDataLessModeEnabled() {
-        NetworkInfo info = ((ConnectivityManager) PreferenceHelper.getAppContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE))
-                .getActiveNetworkInfo();
-
-        if (PreferenceHelper.isCellularDataLessModeEnabled() &&
-                info != null && info.isConnected()) {
-            int netType = info.getType();
-
-            if (netType == ConnectivityManager.TYPE_WIFI) {
-                return false;
-            } else if (netType == ConnectivityManager.TYPE_MOBILE) {
-                return true;
-            }
-        }
-        return false;
     }
 }

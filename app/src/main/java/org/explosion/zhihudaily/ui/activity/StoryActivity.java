@@ -64,8 +64,6 @@ public class StoryActivity extends BaseActivity {
 
     private Context mContext;
 
-    private boolean saveCellularData;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,10 +83,6 @@ public class StoryActivity extends BaseActivity {
         if (getSupportActionBar() != null) { // Toolbar返回按钮
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-        saveCellularData = WebUtils.isCellularDataLessModeEnabled();
-        if (saveCellularData) { // 省流模式下不加载图片
-            webView.getSettings().setLoadsImagesAutomatically(false);
         }
         loadStory();
     }
@@ -139,8 +133,7 @@ public class StoryActivity extends BaseActivity {
 
                         String html = WebUtils.buildHtmlWithCss(storyContent.getBody(), storyContent.getCss());
                         webView.loadDataWithBaseURL(null, html, WebUtils.MIME_TYPE, WebUtils.ENCODING, null);
-                        if (storyContent.getImage() == null || saveCellularData) {
-                            // 无头图或省流模式打开
+                        if (storyContent.getImage() == null) {
                             disableAppbarCollapse();
                         } else {
                             Glide.with(mContext).load(storyContent.getImage()).into(headImage);

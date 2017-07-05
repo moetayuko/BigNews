@@ -25,9 +25,9 @@
             android:name="org.explosion.bignews.ui.activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name="org.explosion.bignews.ui.activity.StoryActivity"
-            android:label="@string/title_activity_story"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name="org.explosion.bignews.ui.activity.PostActivity"
+            android:label="@string/title_activity_post"
+            android:theme="@style/AppTheme.NoActionBar2" />
     </application>
 
 </manifest>

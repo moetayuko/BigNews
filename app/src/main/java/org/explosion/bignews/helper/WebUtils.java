@@ -24,63 +24,26 @@
 
 package org.explosion.bignews.helper;
 
-import java.util.List;
-
-import static org.explosion.bignews.support.Constants.URL.API_PREFIX;
-import static org.explosion.bignews.support.Constants.URL.LATEST_STORY_SUFFIX;
-import static org.explosion.bignews.support.Constants.URL.OLD_STORY_PREFIX;
-import static org.explosion.bignews.support.Constants.URL.STORY_PREFIX;
-import static org.explosion.bignews.support.Constants.URL.THEMES_SUFFIX;
-import static org.explosion.bignews.support.Constants.URL.THEME_PREFIX;
-
 /**
  * Created by dianlujitao on 17-5-2.
  */
 
 public final class WebUtils {
-    private static final String CSS_LINK_PATTERN = " <link href=\"%s\" type=\"text/css\" rel=\"stylesheet\" />";
-    public static final String MIME_TYPE = "text/html";
-    public static final String ENCODING = "utf-8";
+    private static String API_PREFIX = "http://www.explosion.ml/wp-json/wp/v2/";
 
-    private static final String DIV_HEADLINE = "class=\"headline\"";
-    private static final String DIV_HEADLINE_IGNORED = "class=\"headline-ignored\"";
-    private static final String NIGHT_DIV_TAG_START = "<div class=\"night\">";
-    private static final String NIGHT_DIV_TAG_END = "</div>";
+    public static String getCategoriesURL() {
+        return API_PREFIX + "categories?context=embed&per_page=100";
+    }
 
-    public static String buildHtmlWithCss(String html, List<String> cssUrls) {
-        StringBuilder buf = new StringBuilder();
-        for (String cssUrl : cssUrls) { // 在HTML中引入Css
-            buf.append(String.format(CSS_LINK_PATTERN, cssUrl));
+    public static String getPostsURL(int page, int category) {
+        String rc =  API_PREFIX + "posts?context=embed&page=" + Integer.toString(page);
+        if (category != -1) {
+            rc += "&categories=" + Integer.toString(category);
         }
-        boolean isNightMode = PreferenceHelper.isNightModeEnabled();
-        if (isNightMode) { // 夜间模式状态写入HTML
-            buf.append(NIGHT_DIV_TAG_START);
-        }
-        // Hack: 去掉HTML中为顶部图片预留的空间
-        buf.append(html.replace(DIV_HEADLINE, DIV_HEADLINE_IGNORED));
-        if (isNightMode) {
-            buf.append(NIGHT_DIV_TAG_END);
-        }
-        return buf.toString();
+        return rc;
     }
 
-    public static String getLatestStoryListURL() {
-        return API_PREFIX + STORY_PREFIX + LATEST_STORY_SUFFIX;
-    }
-
-    public static String getStoryURL(int id) {
-        return API_PREFIX + STORY_PREFIX + Integer.toString(id);
-    }
-
-    public static String getThemeListURL() {
-        return API_PREFIX + THEMES_SUFFIX;
-    }
-
-    public static String getThemeDescURL(int id) {
-        return API_PREFIX + THEME_PREFIX + Integer.toString(id);
-    }
-
-    public static String getDailyStoryByDate(String date) {
-        return API_PREFIX + STORY_PREFIX + OLD_STORY_PREFIX + date;
+    public static String getPostURL(int id) {
+        return "http://www.explosion.ml/?p=" + Integer.toString(id);
     }
 }

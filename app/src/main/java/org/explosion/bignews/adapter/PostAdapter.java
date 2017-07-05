@@ -28,19 +28,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import org.explosion.bignews.R;
-import org.explosion.bignews.bean.Story;
+import org.explosion.bignews.bean.Post;
 import org.explosion.bignews.support.Constants;
-import org.explosion.bignews.ui.activity.StoryActivity;
+import org.explosion.bignews.ui.activity.PostActivity;
 
 import java.util.List;
 
@@ -48,46 +44,44 @@ import java.util.List;
  * Created by dianlujitao on 17-4-25.
  */
 
-public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
-    private static final String TAG = "StoryAdapter";
+    private static final String TAG = "PostAdapter";
 
     private Context mContext;
 
-    // 故事列表
-    private List<Story> mStoryList;
+    private List<Post> mPostList;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
-        ImageView storyImage;
-        TextView storyTitle;
+        TextView postTitle;
 
         ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
-            storyImage = view.findViewById(R.id.story_image);
-            storyTitle = view.findViewById(R.id.story_title);
+            postTitle = view.findViewById(R.id.post_title);
         }
     }
 
-    public StoryAdapter(List<Story> storyList) {
-        mStoryList = storyList;
+    public PostAdapter(List<Post> postList) {
+        mPostList = postList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mContext == null)
             mContext = parent.getContext();
-        View view = LayoutInflater.from(mContext).inflate(R.layout.story_list_item,
+        View view = LayoutInflater.from(mContext).inflate(R.layout.post_list_item,
                 parent, false);
         final ViewHolder holder = new ViewHolder(view);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
-                Story story = mStoryList.get(position);
-                Intent intent = new Intent(mContext, StoryActivity.class);
-                intent.putExtra(Constants.KEY.STORY_ID, story.getId());
+                Post post = mPostList.get(position);
+                Intent intent = new Intent(mContext, PostActivity.class);
+                intent.putExtra(Constants.KEY_POST_ID, post.getId());
+                intent.putExtra(Constants.KEY_POST_TITLE, post.getTitle());
                 mContext.startActivity(intent);
             }
         });
@@ -97,19 +91,12 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Story story = mStoryList.get(position);
-        holder.storyTitle.setText(story.getTitle());
-        if (story.getImages() == null) {
-            holder.storyImage.setVisibility(View.GONE);
-            Log.d(TAG, "onBindViewHolder: Remove image for: " + story.getTitle());
-        } else { // 否则显示ImageView并加载图片
-            holder.storyImage.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(story.getImages().get(0)).into(holder.storyImage);
-        }
+        Post post = mPostList.get(position);
+        holder.postTitle.setText(post.getTitle());
     }
 
     @Override
     public int getItemCount() {
-        return mStoryList.size();
+        return mPostList.size();
     }
 }

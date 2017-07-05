@@ -45,8 +45,10 @@ import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
 
 import org.explosion.bignews.R;
-import org.explosion.bignews.bean.Theme;
-import org.explosion.bignews.ui.fragment.StoryListFragment;
+import org.explosion.bignews.bean.Category;
+import org.explosion.bignews.helper.JSONParser;
+import org.explosion.bignews.helper.WebUtils;
+import org.explosion.bignews.ui.fragment.PostsFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -55,10 +57,6 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import static java.lang.Math.max;
-import static org.explosion.bignews.helper.ParseJSON.getThemesList;
-import static org.explosion.bignews.helper.WebUtils.getLatestStoryListURL;
-import static org.explosion.bignews.helper.WebUtils.getThemeDescURL;
-import static org.explosion.bignews.helper.WebUtils.getThemeListURL;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,7 +64,7 @@ public class MainActivity extends BaseActivity
 
     private boolean doubleBackToExitPressedOnce;
 
-    private List<Theme> themes;
+    private List<Category> categories;
     private int[] themeIdx;
 
     private Menu navMenu;
@@ -133,16 +131,16 @@ public class MainActivity extends BaseActivity
     }
 
     private void retrieveDrawerMenu() {
-        OkGo.get(getThemeListURL())
+        OkGo.get(WebUtils.getCategoriesURL())
                 .tag(this)
                 .cacheKey("cacheKey")
                 .cacheMode(CacheMode.DEFAULT)
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
-                        themes = getThemesList(s);
+                        categories = JSONParser.parseCategoryList(s);
                         // 获取导航栏内容后异步更新UI
-                        if (themes != null) {
+                        if (categories != null) {
                             Message msg = new Message();
                             msg.what = UPDATE_DRAWER_MENU;
                             handler.sendMessage(msg);
@@ -154,14 +152,14 @@ public class MainActivity extends BaseActivity
     // 生成菜单item加入导航栏
     private void updateDrawerMenu() {
         int maxId = 0;
-        for (int i = 0; i < themes.size(); i++) {
-            Theme theme = themes.get(i);
-            navMenu.add(0, theme.getId(), Menu.NONE, theme.getName());
-            maxId = max(maxId, theme.getId());
+        for (int i = 0; i < categories.size(); i++) {
+            Category category = categories.get(i);
+            navMenu.add(0, category.getId(), Menu.NONE, category.getName());
+            maxId = max(maxId, category.getId());
         }
         themeIdx = new int[maxId + 1];
-        for (int i = 0; i < themes.size(); i++) {
-            themeIdx[themes.get(i).getId()] = i;
+        for (int i = 0; i < categories.size(); i++) {
+            themeIdx[categories.get(i).getId()] = i;
         }
         navMenu.setGroupCheckable(0, true, true);
     }
@@ -225,18 +223,15 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         String tag, url, title;
-        boolean isTheme;
+        int categoryId = -1;
 
         if (id == R.id.nav_home) {
-            url = getLatestStoryListURL();
             tag = "story_home";
             title = "首页";
-            isTheme = false;
         } else {
-            url = getThemeDescURL(id);
-            tag = themes.get(themeIdx[id]).toString();
-            title = themes.get(themeIdx[id]).getName();
-            isTheme = true;
+            tag = categories.get(themeIdx[id]).toString();
+            title = categories.get(themeIdx[id]).getName();
+            categoryId = categories.get(themeIdx[id]).getId();
         }
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -251,7 +246,7 @@ public class MainActivity extends BaseActivity
         }
         Fragment nextFg = getSupportFragmentManager().findFragmentByTag(tag);
         if (nextFg == null) {
-            nextFg = StoryListFragment.newInstance(url, isTheme);
+            nextFg = PostsFragment.newInstance(categoryId);
             ft.add(R.id.story_list_fl, nextFg, tag);
         } else {
             ft.show(nextFg);
@@ -267,7 +262,7 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    public boolean isThemesEmpty() {
-        return themes == null;
+    public boolean isCategoriesEmpty() {
+        return categories == null;
     }
 }

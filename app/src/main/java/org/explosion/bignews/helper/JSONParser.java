@@ -22,31 +22,28 @@
  * SOFTWARE.
  */
 
-package org.explosion.bignews.bean;
+package org.explosion.bignews.helper;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.explosion.bignews.bean.Category;
+import org.explosion.bignews.bean.Post;
+
+import java.util.List;
 
 /**
- * Created by dianlujitao on 17-6-2.
+ * Created by dianlujitao on 17-4-25.
  */
 
-public class Theme {
-    private String thumbnail;
-    private String description;
-    private String name;
-    private int id;
-
-    public String getThumbnail() {
-        return thumbnail;
+public final class JSONParser {
+    public static List<Category> parseCategoryList(String jsonData) {
+        return new Gson().fromJson(jsonData,
+                new TypeToken<List<Category>>() {}.getType());
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
+    public static List<Post> parsePostList(String jsonData) {
+        return new Gson().fromJson(jsonData,
+                new TypeToken<List<Post>>() {}.getType());
     }
 }

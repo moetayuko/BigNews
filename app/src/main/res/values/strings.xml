@@ -32,7 +32,6 @@
 
     <!-- Strings related to Settings -->
     <string name="night_mode">夜间模式</string>
-    <string name="cellular_data_less">省流量模式</string>
     <string name="about">关于</string>
     <string name="double_click_to_exit">再按一次退出程序</string>
     <string name="title_activity_post">PostActivity</string>

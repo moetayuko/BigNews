@@ -32,7 +32,7 @@ public final class WebUtils {
     private static String API_PREFIX = "http://www.explosion.ml/wp-json/wp/v2/";
 
     public static String getCategoriesURL() {
-        return API_PREFIX + "categories?context=embed&per_page=100";
+        return API_PREFIX + "categories?context=embed&exclude=1&per_page=100";
     }
 
     public static String getPostsURL(int page, int category) {

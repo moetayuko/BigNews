@@ -45,7 +45,6 @@ import org.explosion.zhihudaily.adapter.EndlessRecyclerViewScrollListener;
 import org.explosion.zhihudaily.adapter.StoryAdapter;
 import org.explosion.zhihudaily.bean.DailyStory;
 import org.explosion.zhihudaily.bean.Story;
-import org.explosion.zhihudaily.bean.TopStory;
 import org.explosion.zhihudaily.helper.ParseJSON;
 import org.explosion.zhihudaily.support.Constants;
 import org.explosion.zhihudaily.ui.activity.MainActivity;
@@ -71,14 +70,11 @@ public class StoryListFragment extends Fragment {
     private LinearLayoutManager layoutManager;
 
     private List<Story> storyList = new ArrayList<>();
-    private List<TopStory> topStoryList;
     private DailyStory dailyStory;
 
     private Context mContext;
 
     private String storyListURL;
-
-    private Boolean isTheme;
 
     public StoryListFragment() {
         // Required empty public constructor
@@ -99,8 +95,6 @@ public class StoryListFragment extends Fragment {
 
         if (getArguments() != null) {
             mContext = getContext();
-            // 获取Fragment状态（首页或主题新闻）
-            isTheme = getArguments().getBoolean(STORY_LIST_TYPE);
         }
     }
 
@@ -162,10 +156,7 @@ public class StoryListFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         storyListView.setLayoutManager(layoutManager);
 
-        if (!isTheme) {
-            topStoryList = new ArrayList<>();
-        }
-        adapter = new StoryAdapter(storyList, topStoryList);
+        adapter = new StoryAdapter(storyList);
         storyListView.setAdapter(adapter);
         storyListView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -229,11 +220,6 @@ public class StoryListFragment extends Fragment {
         // 如果是刷新则清空当前数据
         if (isRefreshing) {
             storyList.clear();
-            // 首页，带Banner
-            if (!isTheme) {
-                topStoryList.clear();
-                topStoryList.addAll(dailyStory.getTopStories());
-            }
         }
         // 加载更多数据
         storyList.addAll(dailyStory.getStories());
@@ -245,7 +231,7 @@ public class StoryListFragment extends Fragment {
 
     private void loadMoreStories() {
         // 上拉加载仅首页可用
-        if (!isTheme) {
+        if (!getArguments().getBoolean(STORY_LIST_TYPE)) {
             storyListURL = getDailyStoryByDate(dailyStory.getDate());
             retrieveStoryList(false);
         }
